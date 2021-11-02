@@ -19,24 +19,28 @@ import java.util.Objects;
 public class Main extends Application {
 
     private static int viewCount = 0;
-    private static String videoFilePath = lastVideo.load();
+    public static String videoFilePath = lastVideo.load();
     public static MediaPlayer mediaPlayer;
+    public static MediaView mediaView;
+    public static Stage pStage;
+    public static Scene scene;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
+        pStage = primaryStage;
         File videoFile = new File(videoFilePath);
         Media media = new Media(videoFile.toURI().toString());
         mediaPlayer = new MediaPlayer(media);
         mediaPlayer.setAutoPlay(true);
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        MediaView mediaView = new MediaView(mediaPlayer);
+        mediaView = new MediaView(mediaPlayer);
         mediaView.setFitWidth(640);
         mediaView.setFitHeight(480);
         mediaView.setPreserveRatio(false);
 
 
-        Scene scene = new Scene(new Pane(mediaView), 640, 480);
+        scene = new Scene(new Pane(mediaView), 640, 480);
         primaryStage.setScene(scene);
         primaryStage.setAlwaysOnTop(true);
         primaryStage.initStyle(StageStyle.UNDECORATED);

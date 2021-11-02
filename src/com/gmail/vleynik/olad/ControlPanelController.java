@@ -2,11 +2,14 @@ package com.gmail.vleynik.olad;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import javafx.stage.FileChooser;
+
+import java.io.File;
 
 public class ControlPanelController {
 
@@ -34,6 +37,24 @@ public class ControlPanelController {
     @FXML
     private void restart(ActionEvent event) {
         //TODO
+    }
+
+    @FXML
+    private void openNew(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Video files", "*.mp4");
+        fileChooser.setInitialDirectory(new File("resources"));
+        fileChooser.getExtensionFilters().add(filter);
+        File file = fileChooser.showOpenDialog(Main.pStage);
+        if (file != null) {
+            MediaPlayer newMediaPlayer = new MediaPlayer(new Media(file.toURI().toString()));
+            setVideoName(file.getName());
+            Main.mediaPlayer.stop();
+            Main.mediaPlayer = newMediaPlayer;
+            Main.videoFilePath = file.getAbsolutePath();
+            Main.mediaView.setMediaPlayer(newMediaPlayer);
+            newMediaPlayer.play();
+        }
     }
 
     public void setViewCount(int views) {
