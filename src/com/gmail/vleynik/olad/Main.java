@@ -18,7 +18,7 @@ import java.util.Objects;
 
 public class Main extends Application {
 
-    private static int viewCount = 0;
+    public static int viewCount = 0;
     public static String videoFilePath = lastVideo.load();
     public static MediaPlayer mediaPlayer;
     public static MediaView mediaView;

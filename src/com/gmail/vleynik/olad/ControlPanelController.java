@@ -49,11 +49,13 @@ public class ControlPanelController {
         if (file != null) {
             MediaPlayer newMediaPlayer = new MediaPlayer(new Media(file.toURI().toString()));
             setVideoName(file.getName());
+            newMediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             Main.mediaPlayer.stop();
             Main.mediaPlayer = newMediaPlayer;
             Main.videoFilePath = file.getAbsolutePath();
             Main.mediaView.setMediaPlayer(newMediaPlayer);
-            newMediaPlayer.play();
+            Main.viewCount = 0;
+            newMediaPlayer.setAutoPlay(true);
         }
     }
 
