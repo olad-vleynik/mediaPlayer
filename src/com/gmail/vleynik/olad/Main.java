@@ -1,13 +1,11 @@
 package com.gmail.vleynik.olad;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.Media;
-import javafx.scene.media.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -18,29 +16,15 @@ import java.util.Objects;
 
 public class Main extends Application {
 
-    public static int viewCount = 0;
-    public static String videoFilePath = lastVideo.load();
-    public static MediaPlayer mediaPlayer;
-    public static MediaView mediaView;
-    public static Stage pStage;
-    public static Scene scene;
+    public static File videoFile;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        pStage = primaryStage;
-        File videoFile = new File(videoFilePath);
-        Media media = new Media(videoFile.toURI().toString());
-        mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.setAutoPlay(true);
-        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        mediaView = new MediaView(mediaPlayer);
-        mediaView.setFitWidth(640);
-        mediaView.setFitHeight(480);
-        mediaView.setPreserveRatio(false);
+        videoFile = new File(LastVideo.load());
+        MediaViewSetup mediaViewSetup = new MediaViewSetup(videoFile, 640,480);
 
-
-        scene = new Scene(new Pane(mediaView), 640, 480);
+        Scene scene = new Scene(new Pane(mediaViewSetup.getMediaView()));
         primaryStage.setScene(scene);
         primaryStage.setAlwaysOnTop(true);
         primaryStage.initStyle(StageStyle.UNDECORATED);
@@ -50,38 +34,41 @@ public class Main extends Application {
 
 
         Stage controlPanel = new Stage();
-        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("com.gmail.vleynik.olad.fxml")));
+        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("ControlPanel.fxml")));
         Parent root = loader.load();
         ControlPanelController controlPanelController = loader.getController();
+        controlPanelController.setPrimaryStage(primaryStage);
+        controlPanelController.setMediaView(mediaViewSetup.getMediaView());
+        controlPanelController.setMediaPlayer(mediaViewSetup.getMediaPlayer());
+        controlPanelController.setVideoName(videoFile.getName());
+        mediaViewSetup.setCpController(controlPanelController);
         controlPanel.setScene(new Scene(root));
         controlPanel.setAlwaysOnTop(true);
         controlPanel.setX(0);
         controlPanel.setY(485);
         controlPanel.setResizable(false);
         controlPanel.initStyle(StageStyle.UTILITY);
-        controlPanel.show();
         controlPanel.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent we) {
                 primaryStage.close();
             }
         });
-
-        mediaPlayer.setOnRepeat(new Runnable() {
-            @Override
-            public void run() {
-                viewCount++;
-                controlPanelController.setViewCount(viewCount);
-            }
-        });
-        controlPanelController.setVideoName(videoFile.getName());
-    }
-
-    @Override
-    public void stop() {
-        lastVideo.save(new File(videoFilePath).getAbsolutePath());
+        controlPanel.show();
     }
 
     public static void main(String[] args) {
         launch();
+    }
+
+    public static void restartApp() {
+//        Platform.exit();
+//        Platform.runLater( () -> {
+//            try {
+//                new Main().launch();
+//                //new Main().start( new Stage() );
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        });
     }
 }

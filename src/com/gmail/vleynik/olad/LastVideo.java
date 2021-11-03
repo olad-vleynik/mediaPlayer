@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.Scanner;
 
-public class lastVideo {
+public class LastVideo {
     public static void save(String path) {
         try(FileWriter writer = new FileWriter("resources/config.txt"))
         {
@@ -18,7 +18,7 @@ public class lastVideo {
         try (Scanner scanner = new Scanner(new File("resources/config.txt"))) {
             if (scanner.hasNext()) {
                 File file =  new File(scanner.nextLine());
-                if (file.exists()) {
+                if (file.exists() && file.getName().endsWith(".mp4")) {
                     return file.getAbsolutePath();
                 }
             }
